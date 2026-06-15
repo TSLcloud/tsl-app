@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: #0f1117;
+  color: #f0f2f8;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #161b27; }
+::-webkit-scrollbar-thumb { background: #2d3652; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a5fec; }
+
+@media print {
+  body * { visibility: hidden; }
+  #label-print-area, #label-print-area * { visibility: visible; }
+  #label-print-area {
+    position: fixed; top: 0; left: 0;
+    width: 62mm; height: 29mm;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14pt; font-weight: bold;
+    background: white; color: black;
+  }
+}
