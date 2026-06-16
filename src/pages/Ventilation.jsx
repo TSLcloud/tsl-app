@@ -75,7 +75,7 @@ export function VentilationProd() {
         <Card>
           <CardHeader title="New Entry" subtitle="Type is auto-set from Status" />
           <ProdForm module="vent_prod" fields={VENT_FIELDS} onSubmit={handleSubmit} loading={loading}
-            adminFields={["item","status","type","why"]} />
+            adminFields={[]} />
         </Card>
         <Card padding={false}>
           <div className="p-5 border-b border-surface-3">
