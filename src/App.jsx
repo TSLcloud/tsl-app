@@ -58,7 +58,7 @@ export default function App() {
 
       try {
         // Safe GET request avoiding CORS preflight blocks
-        const res = await fetch(`${scriptUrl}?action=checkSetup`);
+        const res = await fetch(`${scriptUrl}?action=checkSetup&_cb=${Date.now()}`);
         const data = await res.json();
         
         if (data && data.success) {
