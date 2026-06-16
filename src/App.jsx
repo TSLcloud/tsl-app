@@ -44,16 +44,16 @@ function AppShell() {
 }
 
 export default function App() {
-  const setupDone = localStorage.getItem("tsl_setup_done");
-
+  // Bypassed the localStorage check since the backend setup wizard has already run.
   return (
     <BrowserRouter>
       <ToastContainer />
       <Routes>
+        {/* Kept the setup route accessible manually just in case an admin ever needs to re-run it */}
         <Route path="/setup" element={<SetupWizard />} />
-        <Route path="/*" element={
-          setupDone ? <AppShell /> : <Navigate to="/setup" replace />
-        } />
+        
+        {/* All visitors are now funneled straight into the functional App layout wrapper */}
+        <Route path="/*" element={<AppShell />} />
       </Routes>
     </BrowserRouter>
   );
