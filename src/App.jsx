@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Sidebar } from "./components/layout/Sidebar";
 import { ToastContainer } from "./components/ui/Toast";
@@ -44,16 +45,78 @@ function AppShell() {
 }
 
 export default function App() {
-  // Bypassed the localStorage check since the backend setup wizard has already run.
+  const [systemState, setSystemState] = useState({ loading: true, setupDone: false, error: false });
+
+  useEffect(() => {
+    const checkGlobalSetup = async () => {
+      const scriptUrl = process.env.REACT_APP_SCRIPT_URL;
+      
+      if (!scriptUrl || scriptUrl.includes("example.com")) {
+        setSystemState({ loading: false, setupDone: false, error: "Missing or invalid REACT_APP_SCRIPT_URL environment variable in Vercel." });
+        return;
+      }
+
+      try {
+        // Safe GET request avoiding CORS preflight blocks
+        const res = await fetch(`${scriptUrl}?action=checkSetup`);
+        const data = await res.json();
+        
+        if (data && data.success) {
+          setSystemState({ loading: false, setupDone: data.setupDone, error: false });
+        } else {
+          setSystemState({ loading: false, setupDone: false, error: data.error || "Failed initialization lookup." });
+        }
+      } catch (err) {
+        setSystemState({ 
+          loading: false, 
+          setupDone: false, 
+          error: "Cannot connect to Google Apps Script. Check deployment permissions, web app URL, or CORS configurations." 
+        });
+      }
+    };
+
+    checkGlobalSetup();
+  }, []);
+
+  if (systemState.loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-surface text-ink">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-sm font-medium">Connecting to TSL Cloud Engine...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (systemState.error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-surface px-4">
+        <div className="max-w-md w-full bg-surface-2 border border-surface-4 rounded-lg p-6 text-center shadow-xl">
+          <div className="text-red-500 text-3xl mb-3">⚠️</div>
+          <h3 className="text-lg font-bold text-ink mb-2">Connection Failure</h3>
+          <p className="text-sm text-ink-faint mb-4">{systemState.error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm font-medium rounded transition-colors"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        {/* Kept the setup route accessible manually just in case an admin ever needs to re-run it */}
-        <Route path="/setup" element={<SetupWizard />} />
-        
-        {/* All visitors are now funneled straight into the functional App layout wrapper */}
-        <Route path="/*" element={<AppShell />} />
+        <Route path="/setup" element={
+          systemState.setupDone ? <Navigate to="/" replace /> : <SetupWizard onComplete={() => window.location.reload()} />
+        } />
+        <Route path="/*" element={
+          systemState.setupDone ? <AppShell /> : <Navigate to="/setup" replace />
+        } />
       </Routes>
     </BrowserRouter>
   );
