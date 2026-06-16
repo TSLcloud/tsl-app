@@ -67,6 +67,7 @@ export default function App() {
           setSystemState({ loading: false, setupDone: false, error: data.error || "Failed initialization lookup." });
         }
       } catch (err) {
+        console.error("TSL App Crash Details:", err);
         setSystemState({ 
           loading: false, 
           setupDone: false, 
