@@ -137,8 +137,13 @@ export async function traceHairID(hairId) {
 }
 
 // ── Admin auth ────────────────────────────────────────────────────────────────
+// ── Admin auth ────────────────────────────────────────────────────────────────────────────────
 export async function adminAuth(password) {
-  return request("adminAuth", { password });
+  const url = `${SCRIPT_URL}?action=adminAuth&password=${encodeURIComponent(password)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+;
 }
 
 // ── Get config ────────────────────────────────────────────────────────────────

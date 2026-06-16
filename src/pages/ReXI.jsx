@@ -61,7 +61,7 @@ export function RexiProd() {
         <Card>
           <CardHeader title="New Entry" />
           <ProdForm module="rexi_prod" fields={REXI_FIELDS} onSubmit={handleSubmit} loading={loading}
-            adminFields={["sku","inOut","why","team"]} />
+            adminFields={[]} />
         </Card>
         <Card padding={false}>
           <div className="p-5 border-b border-surface-3">
